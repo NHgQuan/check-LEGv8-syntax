@@ -121,8 +121,8 @@ boolean aprociateBrackets(char* paraCluster)
 {
     // if necessary, check paraCluster must have only one bracket pair
     if(!areBracketsBalanced(paraCluster)) return F; 
-    if(paraCluster[0] !='(') return F;
-    while(*paraCluster++!=')')
+    //if(paraCluster[0] !='(') return F;
+    if(charNums(paraCluster, '(') != '1' && charNums(paraCluster, ')') != '1') return F;
     if(*paraCluster) return T;
     return F;
 }
@@ -140,10 +140,12 @@ struct Node* separateIntruction(char* intruction)
         char* simpleElement = separateFirstWord(&intruction);
         if(haveBrackets(simpleElement)) 
             if(aprociateBrackets(simpleElement))
-                appendN(&head, separateByBrackets(simpleElement));
+                appendN(&head, separateByBrackets(&simpleElement));
             else 
             {
+                clearN(&head);
                 printf("Brackets in intruction is invalid");
+                return NULL;
             }
         appendN(&head, simpleElement);
     }
@@ -153,6 +155,7 @@ struct Node* separateIntruction(char* intruction)
 void checkIntruction(char* intruction, const int index)
 {
     struct Node* intructionComponents = separateIntruction(intruction);
+    if(!intructionComponents) return NULL;
     char type = intructionType(intructionComponents);
     if(type == 0 ) printf("undefined intruction %s", intructionComponents->data);
     if(type == 'r') checkrType(intructionComponents);

@@ -31,7 +31,8 @@ int main()
     //     printf("%s\n", cloneStr);
     // }
 
-    char* intruction = "     abc $1     $2 $3";  
+    char* intruction = "     abc $1     12234($2)($1)";  
+    char* testStr = "1234($1)";
     
     Node* ittComp = separateIntruction(intruction);
     Node* temp = ittComp;
@@ -40,4 +41,8 @@ int main()
         printf("%s\n", (temp)->data);
         temp = temp->next;
     }
+    // int index = charNums(testStr, '1');
+    // printf("%d\n", index);
+
+
 }

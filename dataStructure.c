@@ -215,6 +215,24 @@ char* deepCopyStr(char* str)
 
 }
 
+int charmem(char* str, int key)
+{
+    for(int i=0; i<=lenStr(str); i++)
+    {
+        if((int)str[i] == key) return i;
+    }
+    return -1;
+}
+
+int charNums(char* str, int key)
+{
+    int numsKey =0;
+    for(int i=0; i<=lenStr(str); i++)
+    {
+        if((int)str[i] == key) numsKey++;
+    }
+    return numsKey;
+}
 
 // Returns 1 if character1 and character2 are matching left
 // and right Brackets
@@ -328,10 +346,20 @@ char* separateFirstWord(char** str)
     return nStr;
 }
 
-char* separateByBrackets(char str[])
+char* separateByBrackets(char** str)
 {
-
-    return 0;
+    int opIdx = charmem(*str, '('), sizeNStr=charmem(*str, ')')-opIdx+1;
+    char* nStr = (char*)malloc(sizeNStr * sizeof(char)+1);
+    for(int i=0; i<sizeNStr-2; i++)
+    {
+        nStr[i]=(*str)[i+opIdx+1];
+    }
+    nStr[sizeNStr-2] = '\0';
+    for(int i=0; i<sizeNStr; i++)
+    {
+        removeCharStr(str, opIdx);
+    }
+    return nStr;
 }
 
 #endif 
