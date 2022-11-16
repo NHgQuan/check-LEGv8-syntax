@@ -129,6 +129,7 @@ boolean aprociateBrackets(char* paraCluster)
 
 struct Node* separateIntruction(char* intruction)
 {
+    standardizeStr(&intruction);
     struct Node* head = NULL;
     if(intruction)
     {

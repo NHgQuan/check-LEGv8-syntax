@@ -31,17 +31,13 @@ int main()
     //     printf("%s\n", cloneStr);
     // }
 
-    char* intruction = "     abc $1     $2 $3";
-    //removeCharStr(&intruction, 3);
-    standardizeStr(&intruction);
-    while(lenStr(intruction)){
-        printf("%s\n", intruction);
-        printf("%s\n", separateFirstWord(&intruction));
-    }
+    char* intruction = "     abc $1     $2 $3";  
     
-    // standardizeStr(intruction);
-    // Node* ittComp = separateIntruction(intruction);
-    // Node* temp = ittComp;
-    // while(temp)
-    //     printf("%s\n", (temp++)->data);
+    Node* ittComp = separateIntruction(intruction);
+    Node* temp = ittComp;
+    while(temp)
+    {
+        printf("%s\n", (temp)->data);
+        temp = temp->next;
+    }
 }
