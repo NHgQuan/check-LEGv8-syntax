@@ -119,9 +119,11 @@ boolean haveBrackets(char* str)
 
 boolean aprociateBrackets(char* paraCluster)
 {
-    if(areBracketsBalanced)
+    // if necessary, check paraCluster must have only one bracket pair
+    if(!areBracketsBalanced(paraCluster)) return F; 
     if(paraCluster[0] !='(') return F;
-    
+    while(*paraCluster++!=')')
+    if(*paraCluster) return T;
     return F;
 }
 
@@ -130,14 +132,18 @@ struct Node* separateIntruction(char* intruction)
     struct Node* head = NULL;
     if(intruction)
     {
-        appendN(&head, separateFirstWord(intruction));
+        appendN(&head, separateFirstWord(&intruction));
     }
     while(*intruction)
     {
-        char* simpleElement = separateFirstWord(intruction);
+        char* simpleElement = separateFirstWord(&intruction);
         if(haveBrackets(simpleElement)) 
             if(aprociateBrackets(simpleElement))
                 appendN(&head, separateByBrackets(simpleElement));
+            else 
+            {
+                printf("Brackets in intruction is invalid");
+            }
         appendN(&head, simpleElement);
     }
     return head;

@@ -31,11 +31,17 @@ int main()
     //     printf("%s\n", cloneStr);
     // }
 
-    struct fData* fData = readFile("D:/Workspace/C/New folder/test.txt");
-    
-    for(int i = 0; i < fData->nums; i++)
-    {
-        printf("%s", fData->data[i]);
+    char* intruction = "     abc $1     $2 $3";
+    //removeCharStr(&intruction, 3);
+    standardizeStr(&intruction);
+    while(lenStr(intruction)){
+        printf("%s\n", intruction);
+        printf("%s\n", separateFirstWord(&intruction));
     }
     
+    // standardizeStr(intruction);
+    // Node* ittComp = separateIntruction(intruction);
+    // Node* temp = ittComp;
+    // while(temp)
+    //     printf("%s\n", (temp++)->data);
 }

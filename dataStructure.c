@@ -146,18 +146,36 @@ int lenStr(char* str)
     return length;
 }
 
-void standardizeStr(char* a)
+void removeCharStr(char** str, int index)
 {
-    int n = lenStr(a); //take length of string
+    if(index>lenStr(*str)||index<0) return;
+    char* resultStr = (char*)malloc(lenStr(*str));
+    int i = 0;
+    for(; i < index; i++)
+    {
+        resultStr[i] = (*str)[i];
+    }
+    for(; i < lenStr(*str); i++)
+    {
+        resultStr[i] = (*str)[i+1];
+    }
+    free(*str);
+    *str = resultStr;
+}
+
+void standardizeStr(char** a)
+{
+    int n = lenStr(*a); //take length of string
  
     //remove space in front
     for(int i=0;i<n;i++){
-        if(a[i]==' '){
-            for(int j=i;j<n-1;j++){
-                a[j] = a[j+1];
-            }
-            //a[n-1]=NULL;
-            a[n-1]='\0';
+        if((*a)[i]==' '){
+            // for(int j=i;j<n-1;j++){
+            //     a[j] = a[j+1];
+            // }
+            // //a[n-1]=NULL;
+            // a[n-1]='\0';
+            removeCharStr(a, i);
             i--;
             n--;
         }
@@ -167,9 +185,9 @@ void standardizeStr(char* a)
  
     //remove space at tail
     for(int i=n-1;i>=0;i--){
-        if(a[i]==' '){
+        if((*a)[i]==' '){
             //a[i]=NULL;
-            a[i]='\0';
+            removeCharStr(a, i);
             n--;
         }
         else break;
@@ -178,12 +196,8 @@ void standardizeStr(char* a)
     //remove invalid space
     for(int i=1;i<n-1;i++)
     {
-        if(a[i]==a[i+1]){
-            for(int j=i;j<n-1;j++){
-                a[j] = a[j+1];
-            }
-            //a[n-1]=NULL;
-            a[n-1]='\0';
+        if((*a)[i]==(*a)[i+1]){
+            removeCharStr(a, i);
             i--;
             n--;
         }
@@ -201,41 +215,7 @@ char* deepCopyStr(char* str)
 
 }
 
-char* takeFirstWord(char* str)
-{
-    //return null if str is empty
-    if(str== NULL) return NULL;
 
-    //make clone of str and standardize it
-    char* cloneStr = deepCopyStr(str);
-    standardizeStr(cloneStr);
-
-    //find length and create first word string
-    int nStrLen = 0;
-    while(cloneStr[nStrLen]!=' '&&cloneStr[nStrLen]!=0)
-    {
-        nStrLen++;
-    }
-
-    char* nStr = (char*) malloc(sizeof(char)*(nStrLen+1));
-
-    for(int i= 0; i <nStrLen;i++)
-    {
-        nStr[i] = cloneStr[i];
-    }
-    nStr[nStrLen]=0;
-
-    return nStr;
-}
-
-void removeChar(char str[], int index)
-{
-    if(index<0 || index>=lenStr(str)) return;
-    int lengthStr= lenStr(str);
-    for(int i=index; i<lengthStr;i++)
-        str[i] = str[i+1];
-}
- 
 // Returns 1 if character1 and character2 are matching left
 // and right Brackets
 boolean isMatchingPair(char character1, char character2)
@@ -296,12 +276,18 @@ boolean areBracketsBalanced(char exp[])
         return F; // not balanced
 }
 
-char* separateFirstWord(char str[])
+char* takeFirstWord(char* str)
 {
+    //return null if str is empty
     if(str== NULL) return NULL;
-    //string pass have must be standardized
+
+    //make clone of str and standardize it
+    char* cloneStr = deepCopyStr(str);
+    standardizeStr(&cloneStr);
+
+    //find length and create first word string
     int nStrLen = 0;
-    while(str[nStrLen]!=' '&&str[nStrLen]!=0)
+    while(cloneStr[nStrLen]!=' '&&cloneStr[nStrLen]!=0)
     {
         nStrLen++;
     }
@@ -310,22 +296,35 @@ char* separateFirstWord(char str[])
 
     for(int i= 0; i <nStrLen;i++)
     {
-        nStr[i] = str[i];
+        nStr[i] = cloneStr[i];
     }
     nStr[nStrLen]=0;
 
+    free(cloneStr);
 
-    int i =0;
+    return nStr;
+}
 
-    while(str[i+nStrLen]!=0)
+void removeFirstWord(char** str)
+{
+    int lengthFirstWord = lenStr(takeFirstWord(*str));
+    // check memory leak in here
+    for(int i = 0; i < lengthFirstWord; i++)
     {
-        str[i] = str[i+nStrLen];
-        i++; 
+        removeCharStr(str, 0);
     }
-    str[i]=0;
+    if(lenStr(*str)) removeCharStr(str, 0);
+    //standardizeStr(str);
+}
 
-    standardizeStr(str);
+char* separateFirstWord(char** str)
+{
+    if(*str== NULL) return NULL;
+    //string pass have must be standardized
+    char* nStr = takeFirstWord(*str);
 
+    removeFirstWord(str);
+    
     return nStr;
 }
 
