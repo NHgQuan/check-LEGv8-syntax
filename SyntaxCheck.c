@@ -125,7 +125,7 @@ boolean aprociateBrackets(char* paraCluster)
     // if necessary, check paraCluster must have only one bracket pair
     if(!areBracketsBalanced(paraCluster)) return F; 
     //if(paraCluster[0] !='(') return F;
-    if(charNums(paraCluster, '(') != '1' && charNums(paraCluster, ')') != '1') return F;
+    if(charNums(paraCluster, '(') != 1 || charNums(paraCluster, ')') != 1) return F;
     if(*paraCluster) return T;
     return F;
 }
