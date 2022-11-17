@@ -2,47 +2,24 @@
 #include "SyntaxCheck.c"
 #include "dataStructure.c"
 
-struct foo2 
-{
-    int a;
-    char b;
-};
-
-void foo(struct foo2 F)
-{
-    F.a = 2;
-}
-
-
-
 int main()
 {
-    // foo2 newfoo2={1, 'a'};
-    // //char* b;
-    // foo(newfoo2);
+    
 
-    // printf("%d\n",newfoo2.a);
-
-    // char a[] = "abc def ghk";
-    // for(int i = 0; i < lenStr(a); i++)
+    // char* intruction = "     abc $1     12234($2)($1)";  
+    // char* testStr = "1234($1)";
+    
+    // Node* ittComp = separateIntruction(intruction);
+    // Node* temp = ittComp;
+    // while(temp)
     // {
-    //     char* cloneStr = deepCopyStr(a);
-    //     removeChar(cloneStr, i);
-    //     printf("%s\n", cloneStr);
+    //     printf("%s\n", (temp)->data);
+    //     temp = temp->next;
     // }
 
-    char* intruction = "     abc $1     12234($2)($1)";  
-    char* testStr = "1234($1)";
-    
-    Node* ittComp = separateIntruction(intruction);
-    Node* temp = ittComp;
-    while(temp)
-    {
-        printf("%s\n", (temp)->data);
-        temp = temp->next;
-    }
-    // int index = charNums(testStr, '1');
-    // printf("%d\n", index);
+    char* str1 = "     abc $1,     12234($2)($1)";
+    standardizeIntt(&str1);
+    printf("%s\n", str1);    
 
 
 }

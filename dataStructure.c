@@ -125,20 +125,6 @@ int popS(struct sNode** top_ref)
     }
 }
 
-boolean compareStr(char* str1, char* str2)
-{
-    if(str1 == NULL || str2 == NULL) 
-    if(str1 == str2) return T;
-    else return F;
-
-    while(*str1!='\0' && *str2!='\0')
-    {
-        if(*(str1++)!=*(str2++)) return F;
-    }
-    if(*str1=='\0' && *str2=='\0') return T;
-    else return F;
-}
-
 int lenStr(char* str)
 {
     int length =0;
@@ -196,7 +182,7 @@ void standardizeStr(char** a)
     //remove invalid space
     for(int i=1;i<n-1;i++)
     {
-        if((*a)[i]==(*a)[i+1]){
+        if((*a)[i]==(*a)[i+1]&&(*a)[i+1]==' '){
             removeCharStr(a, i);
             i--;
             n--;
@@ -234,6 +220,32 @@ int charNums(char* str, int key)
     return numsKey;
 }
 
+// boolean compareStr(char* str1, char* str2)
+// {
+//     int lenStr1 =  lenStr(str1);
+//     int i = 0;
+//     for(; i < lenStr1; i++)
+//     {
+//         if(str2[i] == '\0') return F;
+//         if(str1[i] != str2[i]) return F;
+//     }
+//     if(str2[i]=='\0') return T;
+//     return F;
+// }
+
+boolean compareStr(char* str1, char* str2)
+{
+    if(str1 == NULL || str2 == NULL) 
+    if(str1 == str2) return T;
+    else return F;
+
+    while(*str1!='\0' && *str2!='\0')
+    {
+        if(*(str1++)!=*(str2++)) return F;
+    }
+    if(*str1=='\0' && *str2=='\0') return T;
+    else return F;
+}
 // Returns 1 if character1 and character2 are matching left
 // and right Brackets
 boolean isMatchingPair(char character1, char character2)
@@ -294,18 +306,18 @@ boolean areBracketsBalanced(char exp[])
         return F; // not balanced
 }
 
-char* takeFirstWord(char* str)
+char* takeFirstWord(char* str, const char chr)
 {
     //return null if str is empty
     if(str== NULL) return NULL;
 
     //make clone of str and standardize it
     char* cloneStr = deepCopyStr(str);
-    standardizeStr(&cloneStr);
+    //standardizeIntt(&cloneStr);
 
     //find length and create first word string
     int nStrLen = 0;
-    while(cloneStr[nStrLen]!=' '&&cloneStr[nStrLen]!=0)
+    while(cloneStr[nStrLen]!=chr&&cloneStr[nStrLen]!=0)
     {
         nStrLen++;
     }
@@ -323,25 +335,25 @@ char* takeFirstWord(char* str)
     return nStr;
 }
 
-void removeFirstWord(char** str)
+void removeFirstWord(char** str, const char chr)
 {
-    int lengthFirstWord = lenStr(takeFirstWord(*str));
+    int lengthFirstWord = lenStr(takeFirstWord(*str, chr));
     // check memory leak in here
     for(int i = 0; i < lengthFirstWord; i++)
     {
         removeCharStr(str, 0);
     }
     if(lenStr(*str)) removeCharStr(str, 0);
-    //standardizeStr(str);
+    //standardizeIntt(str);
 }
 
-char* separateFirstWord(char** str)
+char* separateFirstWord(char** str, const char chr)
 {
     if(*str== NULL) return NULL;
     //string pass have must be standardized
-    char* nStr = takeFirstWord(*str);
+    char* nStr = takeFirstWord(*str, chr);
 
-    removeFirstWord(str);
+    removeFirstWord(str, chr);
     
     return nStr;
 }

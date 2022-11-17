@@ -30,7 +30,7 @@ boolean compareStr(char* str1, char* str2);
 
 int lenStr(char* str);
 
-void standardizeStr(char* a);
+void standardizeIntt(char* a);
 
 char* deepCopyStr(char* str);
 

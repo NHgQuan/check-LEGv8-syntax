@@ -32,6 +32,9 @@ inttType intructionType(struct Node *intruction)
 
 boolean isRegister(char* parameter)
 {
+    if(parameter[0] != '$') return F;
+    
+    //if(parameter[1] == '')
     return F;
 }
 
@@ -127,17 +130,32 @@ boolean aprociateBrackets(char* paraCluster)
     return F;
 }
 
+void standardizeIntt(char** intruction)
+{
+    standardizeStr(intruction);
+    int length = lenStr(*intruction), spaceIdx = charmem(*intruction, ' ');
+    if(spaceIdx!=-1)
+        for(int i=spaceIdx+2; i<length; i++)
+            {
+                if((*intruction)[i]==' ')
+                {
+                    removeCharStr(intruction, i);
+                    length--;
+                }
+            }
+}
+
 struct Node* separateIntruction(char* intruction)
 {
-    standardizeStr(&intruction);
+    standardizeIntt(&intruction);
     struct Node* head = NULL;
     if(intruction)
     {
-        appendN(&head, separateFirstWord(&intruction));
+        appendN(&head, separateFirstWord(&intruction, ' '));
     }
     while(*intruction)
     {
-        char* simpleElement = separateFirstWord(&intruction);
+        char* simpleElement = separateFirstWord(&intruction, ',');
         if(haveBrackets(simpleElement)) 
             if(aprociateBrackets(simpleElement))
                 appendN(&head, separateByBrackets(&simpleElement));
@@ -155,7 +173,7 @@ struct Node* separateIntruction(char* intruction)
 void checkIntruction(char* intruction, const int index)
 {
     struct Node* intructionComponents = separateIntruction(intruction);
-    if(!intructionComponents) return NULL;
+    if(!intructionComponents) return ;
     char type = intructionType(intructionComponents);
     if(type == 0 ) printf("undefined intruction %s", intructionComponents->data);
     if(type == 'r') checkrType(intructionComponents);

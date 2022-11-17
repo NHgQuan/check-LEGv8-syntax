@@ -12,7 +12,7 @@ int main()
     // //check each line
     // for(int i = 0; i < intructionSet->nums; i++)
     // {
-    //     standardizeStr(intructionSet->data[i]);
+    //     standardizeIntt(intructionSet->data[i]);
     //     checkIntruction(intructionSet->data[i], i);
     // }
     char* str = "[())";
