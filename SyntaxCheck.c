@@ -67,7 +67,7 @@ boolean haveBrackets(char* str)
 {
     for(int i=0; i<lenStr(str); i++)
     {
-        if(str[i]=='(') return T;
+        if(str[i]=='[') return T;
     }
     return F;
 }
@@ -77,7 +77,7 @@ boolean aprociateBrackets(char* paraCluster)
     // if necessary, check paraCluster must have only one bracket pair
     if(!areBracketsBalanced(paraCluster)) return F; 
     //if(paraCluster[0] !='(') return F;
-    if(charNums(paraCluster, '(') != 1 || charNums(paraCluster, ')') != 1) return F;
+    if(charNums(paraCluster, '[') != 1 || charNums(paraCluster, ']') != 1) return F;
     if(*paraCluster) return T;
     return F;
 }
@@ -100,6 +100,19 @@ void standardizeIntt(char** intruction)
 struct Node* separateIntruction(char* intruction)
 {
     standardizeIntt(&intruction);
+    
+    if(haveBrackets(intruction)) 
+    if(aprociateBrackets(intruction))
+    {
+        removeCharStr(&intruction, charmem(intruction, '['));
+        removeCharStr(&intruction, charmem(intruction, ']'));
+    }
+    else 
+    {
+        printf("Brackets in intruction is invalid");
+        return NULL;
+    }
+    
     struct Node* head = NULL;
     if(intruction)
     {
@@ -108,15 +121,6 @@ struct Node* separateIntruction(char* intruction)
     while(*intruction)
     {
         char* simpleElement = separateFirstWord(&intruction, ',');
-        if(haveBrackets(simpleElement)) 
-            if(aprociateBrackets(simpleElement))
-                appendN(&head, separateByBrackets(&simpleElement));
-            else 
-            {
-                clearN(&head);
-                printf("Brackets in intruction is invalid");
-                return NULL;
-            }
         appendN(&head, simpleElement);
     }
     return head;

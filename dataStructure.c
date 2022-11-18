@@ -431,18 +431,8 @@ char* separateFirstWord(char** str, const char chr)
 
 char* separateByBrackets(char** str)
 {
-    int opIdx = charmem(*str, '('), sizeNStr=charmem(*str, ')')-opIdx+1;
-    char* nStr = (char*)malloc(sizeNStr * sizeof(char)+1);
-    for(int i=0; i<sizeNStr-2; i++)
-    {
-        nStr[i]=(*str)[i+opIdx+1];
-    }
-    nStr[sizeNStr-2] = '\0';
-    for(int i=0; i<sizeNStr; i++)
-    {
-        removeCharStr(str, opIdx);
-    }
-    return nStr;
+    int opIdx = charmem(*str, '['), clIdx=charmem(*str, ']');
+    
 }
 
 #endif 
