@@ -9,6 +9,7 @@ typedef char inttType;//intructionType
 
 typedef enum { F, T } boolean;
 
+// normal list
 typedef struct fData
 {
         int nums;
@@ -75,6 +76,68 @@ int lengthN(struct Node** head)
     return length;
 }
 
+// fData list
+typedef struct fDataNode
+{
+  fData* data;
+  struct fDataNode *next;
+} fDataNode ;
+
+void appendFdN(struct fDataNode** head_ref, fData* new_data)
+{
+    /* 1. allocate node */
+    struct fDataNode* new_node = (struct fDataNode*) malloc(sizeof(struct fDataNode));
+  
+    struct fDataNode *last = *head_ref;  /* used in step 5*/
+  
+    /* 2. put in the data  */
+    new_node->data  = new_data;
+  
+    /* 3. This new node is going to be the last node, so make next of
+          it as NULL*/
+    new_node->next = NULL;
+  
+    /* 4. If the Linked List is empty, then make the new node as head */
+    if (*head_ref == NULL)
+    {
+       *head_ref = new_node;
+       return;
+    }
+  
+    /* 5. Else traverse till the last node */
+    while (last->next != NULL)
+        last = last->next;
+  
+    /* 6. Change the next of last node */
+    last->next = new_node;
+    return;
+}
+
+void clearFdN(struct fDataNode** head)
+{
+    while(*head!=NULL) 
+    {
+        struct fDataNode* temp;
+        struct fDataNode* prev;
+        temp = *head;
+        *head = temp->next;
+        free(temp);
+    }
+}
+
+int lengthFdN(struct fDataNode** head)
+{
+    if(*head==NULL) return 0;
+    int length = 1;
+    struct fDataNode* temp = *head;
+    while(temp=temp->next)
+    {
+        length++;
+    }
+    return length;
+}
+
+
 // Structure of a stack node
 struct sNode {
     char data;
@@ -125,12 +188,13 @@ int popS(struct sNode** top_ref)
     }
 }
 
-int lenStr(char* str)
+int lenStr(const char* str)
 {
     int length =0;
     while(*(str++)!='\0') length++;
     return length;
 }
+
 
 void removeCharStr(char** str, int index)
 {
@@ -201,6 +265,13 @@ char* deepCopyStr(char* str)
 
 }
 
+boolean isNumberStr(const char *str)
+{
+    for(int i=0; i<lenStr(str); i++)
+        if(!('0'<=str[i] &&str[i]<='9')) return F;
+    return T;
+}
+
 int charmem(char* str, int key)
 {
     for(int i=0; i<=lenStr(str); i++)
@@ -233,7 +304,7 @@ int charNums(char* str, int key)
 //     return F;
 // }
 
-boolean compareStr(char* str1, char* str2)
+boolean compareStr(const char* str1, const char* str2)
 {
     if(str1 == NULL || str2 == NULL) 
     if(str1 == str2) return T;

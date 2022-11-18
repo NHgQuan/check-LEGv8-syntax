@@ -6,40 +6,34 @@
 #include "dataStructure.c"
 #include "Readfile.c"
 
-inttType intructionType(struct Node *intruction)
+char* intructionType(struct Node *intruction, fDataNode* inttTypeSet)
 {
-    struct fData* intructionSet = readFile("./intructionType/i.txt");
-    for(int i = 0; i < intructionSet->nums; i++)
+    //haven't deallocated yet
+    for(int i =0; i<inttTypeSet->data->nums; i++) 
     {
-        if(compareStr(intruction->data, intructionSet->data[i])) return 'i';
+        if(compareStr(intruction->data, inttTypeSet->data->data[i])) 
+        {
+            char* inttTypeLine = inttTypeSet->data->data[i];
+            return inttTypeLine;
+        }
     }
-
-    intructionSet = readFile("./intructionType/r.txt");
-    for(int i = 0; i < intructionSet->nums; i++)
-    {
-        if(compareStr(intruction->data, intructionSet->data[i])) return 'r';
-    }
-
-    intructionSet = readFile("./intructionType/j.txt");
-    for(int i = 0; i < intructionSet->nums; i++)
-    {
-        if(compareStr(intruction->data, intructionSet->data[i])) return 'j';
-    }
-
     //if intructionType is not belong to any contruction type
-    return 0;
+    return NULL;
 }
 
 boolean isRegister(char* parameter)
 {
-    if(parameter[0] != '$') return F;
-    
-    //if(parameter[1] == '')
+    struct fData* registersSet = readFile("./LEGv8Data/registersSet/registersSet.txt");
+    for(int i = 0; i < registersSet->nums; i++)
+    {
+        if(compareStr(parameter, registersSet->data[i])) return T;
+    }
     return F;
 }
 
 boolean isImediate(char* parameter)
 {
+    if(isNumberStr(parameter)) return T;
     return F;
 }
 
@@ -60,6 +54,11 @@ boolean parametersIsEnough(struct Node* node, char typeIntruction)
         if(lengthN(&node)==2) return T;
         else return F;
     return F;
+}
+
+void check2r1i(struct Node* node)
+{
+    
 }
 
 void checkrType(struct Node* node)
@@ -172,13 +171,42 @@ struct Node* separateIntruction(char* intruction)
 
 void checkIntruction(char* intruction, const int index)
 {
+    /// @brief  this function will check type of intruction then check parameter of it
+    /// @param intruction is anyline of LEGv8 file
+    /// @param index is line index in file of intruction
+
+    // preload intruction type data file
+    // this file have key word and immediate condition
+    // can use list to store this if have time
+    fDataNode *inttTypeList = NULL;
+    
+    fData* inttTypePath = readFile("./LEGv8Data/intructionType/path.txt")
+
+    for(int i = 0; i <inttTypePath->nums; i++)
+    {
+        appendFdN(&inttTypeList, readFile(inttTypePath->data[i]));
+    }
+    free(inttTypePath);
+
+    // separate intruction to smaller elements
     struct Node* intructionComponents = separateIntruction(intruction);
     if(!intructionComponents) return ;
-    char type = intructionType(intructionComponents);
-    if(type == 0 ) printf("undefined intruction %s", intructionComponents->data);
-    if(type == 'r') checkrType(intructionComponents);
-    if(type == 'i') checkiType(intructionComponents);
-    if(type == 'j') checkjType(intructionComponents);
+
+    //create new variable to store line of this intruction in type file
+    char* inttTypeLine = NULL;
+    fDataNode* tempiTL = inttTypeList;
+    for(int i =0; i<lengthFdN(&inttTypeList); i++)
+    {
+        inttTypeLine = intructionType(intructionComponents, tempiTL);
+        if(inttTypeLine != NULL)
+            {
+                if(i == 1)  check2r1i(intructionComponents);
+                if(i == 2)  checkii(intructionComponents);
+                if(i == 3)  checkjType(intructionComponents);
+            }
+    }
+    if(inttTypeLine == NULL)  printf("undefined intruction %s", intructionComponents->data);
+    
 }
 
 #endif

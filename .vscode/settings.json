@@ -32,6 +32,12 @@
     "*.rmd": "markdown",
     "stdio.h": "c",
     "datastructure.h": "c",
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "array": "c",
+    "istream": "c",
+    "ostream": "c",
+    "tuple": "c",
+    "type_traits": "c",
+    "utility": "c"
   }
 }

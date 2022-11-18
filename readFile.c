@@ -37,9 +37,10 @@ struct fData* readFile(const char* path)
     }
     while(fgets(data[loop++], 100 , file) != NULL);
 
-   //displaying contents of file 
-    printf("[>] Printing File output  : \n");
-
+    for(int i=0; i<fileLen-1; i++)
+    {
+        removeCharStr(&data[i], lenStr(data[i])-1);
+    }
 
     fclose(file);
 
@@ -55,7 +56,7 @@ struct fData* readFile(const char* path)
 struct fData* getData()
 {
     //enter file name
-    char* filePath;
+    char filePath[100];
     printf("Enter file path you want to check: ");
     gets(filePath);
     //read file

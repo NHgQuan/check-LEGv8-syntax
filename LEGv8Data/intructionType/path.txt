@@ -1,0 +1,4 @@
+"./LEGv8Data/intructionType/2r+1i.txt",
+"./LEGv8Data/intructionType/i.txt",
+"./LEGv8Data/intructionType/i.txt",
+"./LEGv8Data/intructionType/i.txt"  
