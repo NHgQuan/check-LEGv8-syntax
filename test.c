@@ -21,14 +21,6 @@ int main()
     //     printf("%s\n", (nfile)->data[i]);
     // }
 
-    char**  pathIntttType = 
-            {
-                "./LEGv8Data/intructionType/i.txt",
-                "./LEGv8Data/intructionType/i.txt",
-                "./LEGv8Data/intructionType/i.txt",
-                "./LEGv8Data/intructionType/i.txt",
-                "END_2D_ARRAY"                
-            };
 
 
 

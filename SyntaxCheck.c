@@ -21,93 +21,46 @@ char* intructionType(struct Node *intruction, fDataNode* inttTypeSet)
     return NULL;
 }
 
-boolean isRegister(char* parameter)
+void isRegister(char* parameter)
 {
     struct fData* registersSet = readFile("./LEGv8Data/registersSet/registersSet.txt");
     for(int i = 0; i < registersSet->nums; i++)
     {
-        if(compareStr(parameter, registersSet->data[i])) return T;
+        if(compareStr(parameter, registersSet->data[i])) return;
     }
-    return F;
+    printf("error: invalid parameter \'%s\'", parameter);
 }
 
-boolean isImediate(char* parameter)
+void isImediate(char* parameter, char* inttTypeLine)
 {
-    if(isNumberStr(parameter)) return T;
-    return F;
+    if(!isNumberStr(parameter)) printf("error: parameter need to be a number");
+    separateFirstWord(inttTypeLine, ' ');
+
+
+    return;
 }
 
-boolean isTargetAddress(char* parameter)
+boolean parametersIsEnough(struct Node* node, int numPara)
 {
-    return F;
-}
-
-boolean parametersIsEnough(struct Node* node, char typeIntruction)
-{
-    if(typeIntruction=='r')
-        if(lengthN(&node)==4) return T;
+        if(lengthN(&node)==numPara) return T;
         else return F;
-    if(typeIntruction=='i')
-        if(lengthN(&node)==3) return T;
-        else return F;
-    if(typeIntruction=='j')
-        if(lengthN(&node)==2) return T;
-        else return F;
-    return F;
+
 }
 
-void check2r1i(struct Node* node)
+void check2r1i(struct Node* node, char* inttTypeLine)
 {
-    
-}
+    parametersIsEnough(node, 3);
 
-void checkrType(struct Node* node)
-{
-    //check num parameter
-    if(!parametersIsEnough(node, 'r')) printf("error: too few arguments to intruction \' %s\'", node->data);
-    
     //check first parameter
-    node=node->next;
-    if(!isRegister(node->data)) printf("error: invalid parameter \'%s\'", node->data);
+    isRegister(node->data);
 
     //check second parameter
     node=node->next;
-    if(!isRegister(node->data)) printf("error: invalid parameter \'%s\'", node->data);
+    isRegister(node->data);
 
     //check third parameter
     node=node->next;
-    if(!isRegister(node->data)) printf("error: invalid parameter \'%s\'", node->data);
-
-}
-
-void checkiType(struct Node* node)
-{
-    //check num parameter
-    if(!parametersIsEnough(node, 'i')) printf("error: too few arguments to intruction \' %s\'", node->data);
-    
-    //check first parameter
-    node=node->next;
-    if(!isRegister(node->data)) printf("error: invalid parameter \'%s\'", node->data);
-
-    //check second parameter
-    node=node->next;
-    if(!isRegister(node->data)) printf("error: invalid parameter \'%s\'", node->data);
-
-    //check third parameter
-    node=node->next;
-    if(!isImediate(node->data)) printf("error: invalid parameter \'%s\'", node->data);
-
-}
-
-void checkjType(struct Node* node)
-{
-    //check num parameter
-    if(!parametersIsEnough(node, 'j')) printf("error: too few arguments to intruction \' %s\'", node->data);
-    
-    //check first parameter
-    node=node->next;
-    if(!isTargetAddress(node->data)) printf("error: invalid parameter \'%s\'", node->data);
-
+    isImediate(node->data, inttTypeLine);
 }
 
 boolean haveBrackets(char* str)
@@ -169,6 +122,13 @@ struct Node* separateIntruction(char* intruction)
     return head;
 }
 
+void checkParameter(struct Node* parameter, char* inttTypeLine, int id)
+{
+    if(id == 1)  check2r1i(parameter, inttTypeLine);
+    if(id == 2)  check2r1i(parameter, inttTypeLine);
+    if(id == 3)  check2r1i(parameter, inttTypeLine);
+}
+
 void checkIntruction(char* intruction, const int index)
 {
     /// @brief  this function will check type of intruction then check parameter of it
@@ -180,7 +140,7 @@ void checkIntruction(char* intruction, const int index)
     // can use list to store this if have time
     fDataNode *inttTypeList = NULL;
     
-    fData* inttTypePath = readFile("./LEGv8Data/intructionType/path.txt")
+    fData* inttTypePath = readFile("./LEGv8Data/intructionType/path.txt");
 
     for(int i = 0; i <inttTypePath->nums; i++)
     {
@@ -200,9 +160,8 @@ void checkIntruction(char* intruction, const int index)
         inttTypeLine = intructionType(intructionComponents, tempiTL);
         if(inttTypeLine != NULL)
             {
-                if(i == 1)  check2r1i(intructionComponents);
-                if(i == 2)  checkii(intructionComponents);
-                if(i == 3)  checkjType(intructionComponents);
+                char* iTLClone = deepCopyStr(inttTypeLine);
+                checkParameter(intructionComponents->next, iTLClone, i);
             }
     }
     if(inttTypeLine == NULL)  printf("undefined intruction %s", intructionComponents->data);
