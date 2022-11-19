@@ -62,7 +62,8 @@ void isImediate(char* parameter, char** inttTypeLine)
     if(!isNumberStr(parameter)) printf("error: parameter need to be a number");
     int* bound = getImmBound(separateFirstWord(inttTypeLine, ' '));
 
-
+    int imm = toInt(parameter);
+    if(!(imm>=bound[0]&&imm<=bound[1])) printf("error: out of range: %s",parameter);
     return;
 }
 

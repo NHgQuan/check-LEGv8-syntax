@@ -16,13 +16,9 @@ int main()
     //     temp = temp->next;
     // }
 
-    char* condition = "u12";
-    int* bound = getImmBound(condition);
-
-    for(int i = 0; i <2; i++)
-    {
-        printf("%d\n", bound[i]);
-    }
+    char* parameter = "123";
+    char* inttTypeLine = "u12";
+    isImediate(parameter, &inttTypeLine);
 
 
 
