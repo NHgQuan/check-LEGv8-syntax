@@ -291,6 +291,17 @@ int charNums(char* str, int key)
     return numsKey;
 }
 
+int toInt(char *str)
+{
+    int result =0;
+    for(int i=0; i<lenStr(str); i++)
+    {
+        int digit = str[i]-'0';
+        result = result*10+digit;      
+    }
+    return result;
+}
+
 // boolean compareStr(char* str1, char* str2)
 // {
 //     int lenStr1 =  lenStr(str1);

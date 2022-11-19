@@ -5,7 +5,7 @@
 #include<stdio.h>
 #include "dataStructure.c"
 #include "Readfile.c"
-
+#include "math.c"
 char* intructionType(struct Node *intruction, fDataNode* inttTypeSet)
 {
     //haven't deallocated yet
@@ -31,10 +31,36 @@ void isRegister(char* parameter)
     printf("error: invalid parameter \'%s\'", parameter);
 }
 
-void isImediate(char* parameter, char* inttTypeLine)
+int* getImmBound(char* condition)
 {
+    /// @brief this function return upper bound and lower bound of immediate condition
+    /// @param condition have format u_number or s_number, u is unsign and s is sign
+    /// @return an two element array of upper bound and lower bound
+
+    int* bound = (int*)malloc(sizeof(int)*2);
+    if(condition[0]=='u')
+    {
+        bound[0] = 0;
+        removeCharStr(&condition, 0);
+        bound[1] = expo(2, toInt(condition)) - 1;
+    }
+    if(condition[0]=='s')
+    {
+        bound[0] =  -   (expo(2, toInt(condition) - 1 ));
+        removeCharStr(&condition, 0);
+        bound[1] =      expo(2, toInt(condition) - 1 );
+    }
+    return bound;
+}
+
+void isImediate(char* parameter, char** inttTypeLine)
+{
+    /// @brief this function check immediate of intruction
+    //  immediate type:     u12 s19 u16 u6  s26 LSL
+    /// @param parameter 
+    /// @param inttTypeLine 
     if(!isNumberStr(parameter)) printf("error: parameter need to be a number");
-    separateFirstWord(inttTypeLine, ' ');
+    int* bound = getImmBound(separateFirstWord(inttTypeLine, ' '));
 
 
     return;
@@ -47,7 +73,7 @@ boolean parametersIsEnough(struct Node* node, int numPara)
 
 }
 
-void check2r1i(struct Node* node, char* inttTypeLine)
+void check2r1i(struct Node* node, char** inttTypeLine)
 {
     parametersIsEnough(node, 3);
 
@@ -126,7 +152,7 @@ struct Node* separateIntruction(char* intruction)
     return head;
 }
 
-void checkParameter(struct Node* parameter, char* inttTypeLine, int id)
+void checkParameter(struct Node* parameter, char** inttTypeLine, int id)
 {
     if(id == 1)  check2r1i(parameter, inttTypeLine);
     if(id == 2)  check2r1i(parameter, inttTypeLine);
@@ -165,7 +191,8 @@ void checkIntruction(char* intruction, const int index)
         if(inttTypeLine != NULL)
             {
                 char* iTLClone = deepCopyStr(inttTypeLine);
-                checkParameter(intructionComponents->next, iTLClone, i);
+                separateFirstWord(&iTLClone, ' ');   //remove key word, keep only imm condition
+                checkParameter(intructionComponents->next, &iTLClone, i);
             }
     }
     if(inttTypeLine == NULL)  printf("undefined intruction %s", intructionComponents->data);
