@@ -71,7 +71,6 @@ boolean parametersIsEnough(struct Node* node, int numPara)
 {
         if(lengthN(&node)==numPara) return T;
         else return F;
-
 }
 
 void check2r1i(struct Node* node, char** inttTypeLine)
@@ -168,6 +167,7 @@ void checkIntruction(char* intruction, const int index)
 
     // preload intruction type data file
     // this file have key word and immediate condition
+    //FDataNode is a list of fData with each node contain data of each intructionType file
     // can use list to store this if have time
     fDataNode *inttTypeList = NULL;
     
@@ -185,16 +185,22 @@ void checkIntruction(char* intruction, const int index)
 
     //create new variable to store line of this intruction in type file
     char* inttTypeLine = NULL;
-    fDataNode* tempiTL = inttTypeList;
+    fDataNode* tempITL = inttTypeList;
     for(int i =0; i<lengthFdN(&inttTypeList); i++)
     {
-        inttTypeLine = intructionType(intructionComponents, tempiTL);
+        // i is id of each intructionType file
+        inttTypeLine = intructionType(intructionComponents, tempITL);
         if(inttTypeLine != NULL)
             {
                 char* iTLClone = deepCopyStr(inttTypeLine);
+                //memory leak
                 separateFirstWord(&iTLClone, ' ');   //remove key word, keep only imm condition
                 checkParameter(intructionComponents->next, &iTLClone, i);
+                break;
             }
+        
+        if(inttTypeLine == NULL)
+            tempITL= tempITL->next;
     }
     if(inttTypeLine == NULL)  printf("undefined intruction %s", intructionComponents->data);
     

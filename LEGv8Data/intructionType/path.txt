@@ -1,4 +1,8 @@
-"./LEGv8Data/intructionType/2r+1i.txt",
-"./LEGv8Data/intructionType/i.txt",
-"./LEGv8Data/intructionType/i.txt",
-"./LEGv8Data/intructionType/i.txt"  
+./LEGv8Data/intructionType/1i.txt
+./LEGv8Data/intructionType/1r.txt
+./LEGv8Data/intructionType/1r+1i.txt
+./LEGv8Data/intructionType/1r+2i.txt
+./LEGv8Data/intructionType/2r.txt
+./LEGv8Data/intructionType/2r+1i.txt
+./LEGv8Data/intructionType/3r.txt
+./LEGv8Data/intructionType/coprocessor.txt
