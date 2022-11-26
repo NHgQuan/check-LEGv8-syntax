@@ -5,7 +5,7 @@
 
 int main()
 {
-    char* parameter = "123";
-    char* inttTypeLine = "u12";
-    isImediate(parameter, &inttTypeLine);
+    char * intrction = "ADDI $s0 ,$s1, 10000000000000000000a";
+    // checkIntruction(intrction, 1);
+    printf("%c", backStr(intrction));
 }

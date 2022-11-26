@@ -302,18 +302,14 @@ int toInt(char *str)
     return result;
 }
 
-// boolean compareStr(char* str1, char* str2)
-// {
-//     int lenStr1 =  lenStr(str1);
-//     int i = 0;
-//     for(; i < lenStr1; i++)
-//     {
-//         if(str2[i] == '\0') return F;
-//         if(str1[i] != str2[i]) return F;
-//     }
-//     if(str2[i]=='\0') return T;
-//     return F;
-// }
+char backStr(char *str)
+{
+    if(*str=='\0') return '\0';
+    while(*(++str)!='\0')
+    {
+    }
+    return *(--str);
+}
 
 boolean compareStr(const char* str1, const char* str2)
 {

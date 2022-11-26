@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/Workspace/C/New folder",
-      "program": "d:/Workspace/C/New folder/build/Debug/outDebug",
+      "cwd": "d:/Workspace/C/checkLEGv8",
+      "program": "d:/Workspace/C/checkLEGv8/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

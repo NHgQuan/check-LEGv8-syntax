@@ -1,8 +1,8 @@
-./LEGv8Data/intructionType/1i.txt
-./LEGv8Data/intructionType/1r.txt
-./LEGv8Data/intructionType/1r+1i.txt
-./LEGv8Data/intructionType/1r+2i.txt
-./LEGv8Data/intructionType/2r.txt
-./LEGv8Data/intructionType/2r+1i.txt
-./LEGv8Data/intructionType/3r.txt
-./LEGv8Data/intructionType/coprocessor.txt
+D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/1i.txt
+D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/1r.txt
+D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/1r+1i.txt
+D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/1r+2i.txt
+D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/2r.txt
+D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/2r+1i.txt
+D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/3r.txt
+D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/coprocessor.txt

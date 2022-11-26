@@ -11,7 +11,7 @@ char* intructionType(struct Node *intruction, fDataNode* inttTypeSet)
     //haven't deallocated yet
     for(int i =0; i<inttTypeSet->data->nums; i++) 
     {
-        if(compareStr(intruction->data, inttTypeSet->data->data[i])) 
+        if(compareStr(intruction->data, takeFirstWord(inttTypeSet->data->data[i], ' '))) 
         {
             char* inttTypeLine = inttTypeSet->data->data[i];
             return inttTypeLine;
@@ -23,7 +23,7 @@ char* intructionType(struct Node *intruction, fDataNode* inttTypeSet)
 
 void isRegister(char* parameter)
 {
-    struct fData* registersSet = readFile("./LEGv8Data/registersSet/registersSet.txt");
+    struct fData* registersSet = readFile("D:/Workspace/C/checkLEGv8/LEGv8Data/registersSet/registersSet.txt");
     for(int i = 0; i < registersSet->nums; i++)
     {
         if(compareStr(parameter, registersSet->data[i])) return;
@@ -152,6 +152,33 @@ struct Node* separateIntruction(char* intruction)
     return head;
 }
 
+boolean isLabel(char* intructionParameter)
+{
+    /// @brief 
+    /// @param intructionParameter 
+    /// @return T if the parameter have last char is ':'
+    if(backStr(intructionParameter)==':') return T;
+    return F;
+}
+struct Node* getLabelList(fData* intructionSet)
+{
+    /// @brief this function traverse all node of intructionSet then return the list of label in intructionSet
+    /// @param intructionSet list of intruction in LEG code
+    /// @return list of label in intructionSet
+    struct Node* LabelList = (struct Node*)malloc(sizeof(Node));
+    LabelList = NULL;
+    for(int i =0 ; i< intructionSet->nums; i++)
+    {
+        if(isLabel(intructionSet->data[i])) 
+        {
+            char* label = deepCopyStr(intructionSet->data[i]);
+            removeCharStr(label, lenStr(label)-1);
+            appendN(&LabelList, label);
+        }
+    }
+    return LabelList;
+}
+
 void checkParameter(struct Node* parameter, char** inttTypeLine, int id)
 {
     if(id == 1)  check2r1i(parameter, inttTypeLine);
@@ -171,7 +198,13 @@ void checkIntruction(char* intruction, const int index)
     // can use list to store this if have time
     fDataNode *inttTypeList = NULL;
     
-    fData* inttTypePath = readFile("./LEGv8Data/intructionType/path.txt");
+    fData* inttTypePath = readFile("D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/path.txt");
+
+    if(inttTypePath == NULL) 
+    {
+        printf("error: Couldn't open path.txt");
+        return;
+    }
 
     for(int i = 0; i <inttTypePath->nums; i++)
     {
@@ -195,7 +228,8 @@ void checkIntruction(char* intruction, const int index)
                 char* iTLClone = deepCopyStr(inttTypeLine);
                 //memory leak
                 separateFirstWord(&iTLClone, ' ');   //remove key word, keep only imm condition
-                checkParameter(intructionComponents->next, &iTLClone, i);
+                // remember fix 1 to i
+                checkParameter(intructionComponents->next, &iTLClone, 1);
                 break;
             }
         
