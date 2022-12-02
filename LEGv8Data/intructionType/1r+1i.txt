@@ -2,3 +2,4 @@
 CBZ s19
 CBNZ s19
 CMPI u12
+LDA s19

@@ -45,25 +45,29 @@ void removeComment(fData* intructionSet)
         index = strstr(intructionSet->data[i], "/*");
         if(index!= -1)
             {
+                int lineIndex = i;
                 i = removeCommentAt(intructionSet, i);
                 if(i==-1)
-                    printf("error:comment unclose at the end of file/n");
+                    printf("(x) comment unclose at the end of file [line %d]\n", lineIndex);
             }
     }
 }
 
-void changeSegmentFlag(char* intructionLine)
+boolean changeSegmentFlag(char* intructionLine)
 {
     if(compareStr(intructionLine, ".data")) 
     {
         dataSegment = 1;
         textSegment =0;
+        return T;
     }
-    if(compareStr(intructionLine, ".test")) 
+    if(compareStr(intructionLine, ".text")) 
     {
         dataSegment = 0;
         textSegment = 1;
+        return T;
     }
+    return F;
 }
 
 void rechangeSegmentFlag()
@@ -87,14 +91,20 @@ char* intructionType(struct Node *intruction, fDataNode* inttTypeSet)
     return NULL;
 }
 
-void isRegister(char* parameter)
+void isRegister(char* parameter, int lineIndex)
 {
     struct fData* registersSet = readFile("D:/Workspace/C/checkLEGv8/LEGv8Data/registersSet/registersSet.txt");
     for(int i = 0; i < registersSet->nums; i++)
     {
         if(compareStr(parameter, registersSet->data[i])) return;
     }
-    printf("error: invalid parameter \'%s\'", parameter);
+    printf("(x) invalid parameter \'%s\' [line %d]\n", parameter, lineIndex);
+}
+
+boolean isLSL(int parameter)
+{
+    //LSL has following value
+    return (parameter==0)||(parameter==16)||(parameter==32)||(parameter==48);
 }
 
 int* getImmBound(char* condition)
@@ -119,7 +129,7 @@ int* getImmBound(char* condition)
     return bound;
 }
 
-void isImediate(char* parameter, char** inttTypeLine, Node* constSet, Node* labelSet)
+void isImediate(char* parameter, int lineIndex, char** inttTypeLine, Node* constSet, Node* labelSet)
 {
     /// @brief this function check immediate of intruction
     //  immediate type:     u12 s19 u16 u6  s26 LSL
@@ -127,35 +137,52 @@ void isImediate(char* parameter, char** inttTypeLine, Node* constSet, Node* labe
     /// @param inttTypeLine 
     if(isNumberStr(parameter))
     {
-        int* bound = getImmBound(separateFirstWord(inttTypeLine, ' '));
-
-        int imm = toInt(parameter);
-        if(!(imm>=bound[0]&&imm<=bound[1])) printf("error: out of range: %s",parameter);
+        if(!compareStr(takeFirstWord((*inttTypeLine), ' '), "LSL"))
+        {
+            int* bound = getImmBound(separateFirstWord(inttTypeLine, ' '));
+            int imm = toInt(parameter);
+            if(!(imm>=bound[0]&&imm<=bound[1])) printf("(x) out of range: %s [line %d]\n",parameter, lineIndex);
+        }
+        else
+        {
+            int imm = toInt(parameter);
+            if(!isLSL(imm))
+            {
+                printf("(x) invalid parameter %s [line %d]\n",parameter, lineIndex);
+            }
+        }
+        
     }
     else
     {
         boolean isConstant = F;
-        while(constSet)
+        if(constSet)
         {
-            if(compareStr(parameter, constSet->data))
+            while(constSet)
             {
-                isConstant = T;
-                break;
+                if(compareStr(parameter, constSet->data))
+                {
+                    isConstant = T;
+                    break;
+                }
+                constSet = constSet->next;
             }
-            constSet = constSet->next;
         }
         boolean isLabel = F;
-        while(labelSet&&!isConstant)
+        if(labelSet)
         {
-            if(compareStr(parameter, labelSet->data))
+            while(labelSet&&!isConstant)
             {
-                isLabel = T;
-                break;
+                if(compareStr(parameter, labelSet->data))
+                {
+                    isLabel = T;
+                    break;
+                }
+                labelSet = labelSet->next;
             }
-            labelSet = labelSet->next;
         }
         if(!(isLabel||isConstant))
-            printf("error: invalid value\n");
+            printf("(x) invalid value %s [line %d]\n",parameter, lineIndex);
     }
 }
 
@@ -176,6 +203,8 @@ boolean haveBrackets(char* str)
 
 boolean aprociateBrackets(char* paraCluster)
 {
+    ///@brief this function check a part of LEGv8 intruction have balanced and enough bracket
+
     // if necessary, check paraCluster must have only one bracket pair
     if(!areBracketsBalanced(paraCluster)) return F; 
     //if(paraCluster[0] !='(') return F;
@@ -186,6 +215,8 @@ boolean aprociateBrackets(char* paraCluster)
 
 void standardizeIntt(char** intruction)
 {
+    /// @brief this function remove all space and tab char is unstanddize
+    /// @param intruction 
     standardizeStr(intruction);
     int length = lenStr(*intruction), spaceIdx = charmem(*intruction, ' ');
     if(spaceIdx!=-1)
@@ -199,8 +230,9 @@ void standardizeIntt(char** intruction)
             }
 }
 
-struct Node* separateIntruction(char* intruction)
+struct Node* separateIntruction(char* intruction, int lineIndex)
 {
+    /// @brief this function split each part of intruction into a list 
     standardizeIntt(&intruction);
     
     if(haveBrackets(intruction)) 
@@ -211,7 +243,7 @@ struct Node* separateIntruction(char* intruction)
     }
     else 
     {
-        printf("Brackets in intruction is invalid");
+        printf("(x) Brackets in intruction is invalid [line %d]\n", lineIndex);
         return NULL;
     }
     
@@ -258,7 +290,7 @@ struct Node* getLabelList(fData* intructionSet)
 struct Node* getConstansList(fData* intructionSet)
 {
     /// @brief this function traverse all node of intructionSet 
-    /// then remove all lines have const identifiers and return the list of label in intructionSet
+    /// then remove all lines have const identifiers and return the list of const in intructionSet
     /// if const identifier is in data segment or text segment, print error message
     /// @param intructionSet list of intruction in LEG code
     /// @return list of label in intructionSet
@@ -266,13 +298,30 @@ struct Node* getConstansList(fData* intructionSet)
     for(int i = 0; i < intructionSet->nums; i++)
     {
         // set flag
-        changeSegmentFlag(intructionSet->data[i]);
+        if(changeSegmentFlag(intructionSet->data[i])) continue;
 
         if(compareStr(takeFirstWord((intructionSet->data[i]), ' '), ".eqv"))
             {
                 //take const name to const list
                 removeFirstWord(&(intructionSet->data[i]), ' ');
                 appendN(&constList, separateFirstWord(&(intructionSet->data[i]), ' '));
+
+                //remove number data part
+                if(lenStr(intructionSet->data[i]))
+                {
+                    if(strstr(intructionSet->data[i], " "))
+                        removeFirstWord(&(intructionSet->data[i]), ' ');
+                    else
+                    if(strstr(intructionSet->data[i], ","))
+                        removeFirstWord(&(intructionSet->data[i]), ' ');
+                    else
+                        {
+                            while(lenStr(intructionSet->data[i]))
+                            {
+                                removeCharStr(&(intructionSet->data[i]), 0);
+                            }
+                        }
+                }
 
                 //if line is still have data, print error
                 if(lenStr(intructionSet->data[i]))
@@ -281,56 +330,69 @@ struct Node* getConstansList(fData* intructionSet)
                         {
                             removeFirstWord(&(intructionSet->data[i]), 'z');
                         }
-                        printf("error: invalid identifier");
+                        printf("(x) invalid identifier [line %d]\n", i);
                     }
 
                 //if const identifier is in data or text segment, print error
                 if(dataSegment||textSegment)
-                    printf("error: constant identifier cannot be here");
+                    printf("(x) constant identifier cannot be here[line %d]\n", i);
             }
     }
 
     //set flag to initial value
     rechangeSegmentFlag();
+    return constList;
 }
 
-void checkParameter(struct Node* parameter, char** inttTypeLine, char* numRe, char* numIm, Node* constSet, Node* labelSet)
+void checkParameter(struct Node* parameter, int lineIndex, char** inttTypeLine, char* numRe, char* numIm, Node* constSet, Node* labelSet)
 {
-    parametersIsEnough(parameter, 3);
-    if(compareStr(numIm, "i"))
+    /// @brief This function in turn checks the parameters
+    /// @param parameter list of parameters
+    /// @param lineIndex 
+    /// @param inttTypeLine information of immediate parameter
+    /// @param numRe num of times check r parameter
+    /// @param numIm num of times check i parameter
+    /// @param constSet list of constant
+    /// @param labelSet list of label
+    
+    if(!compareStr(numRe, "i"))
     {
-        //this in data segment
-        //check flag
-        if(dataSegment==0) printf("ERROR: this must be in data segment\n");
-    }else
-    {
-        if(textSegment==0) printf("ERROR: this must be in text segment\n");
-        
         //check Re
         int numRe_int = toInt(numRe);
+        int numIm_int = toInt(numIm);
+
+        if(!parametersIsEnough(parameter, numRe_int+numIm_int))
+            printf("(x)parameter is not enough [line %d]\n", lineIndex);
         for(int i = 0; i < numRe_int; i++)
         {
-            isRegister(parameter->data);
+            isRegister(parameter->data, lineIndex);
             parameter = parameter->next;
         }
 
         //check Im
-        int numIm_int = toInt(numIm);
         for(int i = 0; i < numIm_int; i++)
         {
-            isImediate(parameter->data, inttTypeLine, constSet, labelSet);
+            isImediate(parameter->data, lineIndex, inttTypeLine, constSet, labelSet);
             parameter = parameter->next;
+            separateFirstWord(inttTypeLine, ' ');
+        }
     }
-    }
+    
     
 }
 
-void checkIntruction(char* intruction, const int index, Node* constSet, Node* labelSet)
+void checkIntruction(char* intruction, const int lineIndex, Node* constSet, Node* labelSet)
 {
     /// @brief  this function will check type of intruction then check parameter of it
     /// @param intruction is anyline of LEGv8 file
-    /// @param index is line index in file of intruction
-    if(*intruction='\0') return;
+    /// @param lineIndex is line index in file of intruction
+    /// @param constSet list of constant
+    /// @param labelSet list of label
+
+    if(*intruction=='\0') return;
+
+    //check which segment intruction is in
+    if(changeSegmentFlag(intruction)) return;
     // preload intruction type data file
     // this file have key word and immediate condition
     //FDataNode is a list of fData with each node contain data of each intructionType file
@@ -341,18 +403,19 @@ void checkIntruction(char* intruction, const int index, Node* constSet, Node* la
 
     if(inttTypePath == NULL) 
     {
-        printf("error: Couldn't open path.txt");
+        printf("(x) Couldn't open path.txt");
         return;
     }
 
     for(int i = 0; i <inttTypePath->nums; i++)
     {
-        appendFdN(&inttTypeList, readFile(inttTypePath->data[i]));
+        char* path =inttTypePath->data[i];
+        appendFdN(&inttTypeList, readFile(path));
     }
     free(inttTypePath);
 
     // separate intruction to smaller elements
-    struct Node* intructionComponents = separateIntruction(intruction);
+    struct Node* intructionComponents = separateIntruction(intruction, lineIndex);
     if(!intructionComponents) return ;
 
     //create new variable to store line of this intruction in type file
@@ -366,23 +429,33 @@ void checkIntruction(char* intruction, const int index, Node* constSet, Node* la
         numRe = separateFirstWord(&inforPara, ' ');
         numIm = separateFirstWord(&inforPara, ' ');
 
-        changeSegmentFlag(intructionComponents->data);
+        
         // i is id of each intructionType file
         inttTypeLine = intructionType(intructionComponents, tempITL);
         if(inttTypeLine != NULL)
             {
                 char* iTLClone = deepCopyStr(inttTypeLine);
+                if(compareStr(numRe, "i"))
+                {
+                    //this in data segment
+                    //check flag
+                    if(dataSegment==0) printf("(x) %s must be in data segment [line %d]\n", takeFirstWord(iTLClone, ' '), lineIndex);
+                }
+                else
+                {
+                    if(textSegment==0) printf("(x) %s must be in text segment [line %d]\n", takeFirstWord(iTLClone, ' '), lineIndex);
+                }
                 //memory leak
                 separateFirstWord(&iTLClone, ' ');   //remove key word, keep only imm condition
-                // remember fix 1 to i
-                checkParameter(intructionComponents->next, &iTLClone, numRe, numIm, constSet, labelSet);
+                
+                checkParameter(intructionComponents->next, lineIndex, &iTLClone, numRe, numIm, constSet, labelSet);
                 break;
             }
         
         if(inttTypeLine == NULL)
             tempITL= tempITL->next;
     }
-    if(inttTypeLine == NULL)  printf("undefined intruction %s", intructionComponents->data);
+    if(inttTypeLine == NULL)  printf("(x) undefined intruction %s [line %d]\n", intructionComponents->data, lineIndex);
     
 }
 

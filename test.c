@@ -5,8 +5,9 @@
 
 int main()
 {
-    char* str1 ="abc abc bcd bc b aaa";
-    char* str2 ="aa";
-    printf("%d", strstr(str1, str2));
+    char* str1 ="   LDA     X0, array               ";
+    standardizeIntt(&str1);
+    printf("%s", str1);
+
     
 }

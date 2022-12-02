@@ -231,6 +231,11 @@ void removeCharStr(char** str, int index)
 
 void standardizeStr(char** a)
 {
+    for(int i = 0; i <lenStr(*a); i++)
+    {
+        if((*a)[i] == '\t')
+            (*a)[i] = ' ';
+    }
     int n = lenStr(*a); //take length of string
  
     //remove space in front

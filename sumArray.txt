@@ -3,8 +3,10 @@
 .data
 array: .word 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 
-.text
 
+
+.text
+int_a: .word 100
 /*
  * sum elements from array into X3
  * used registers:
@@ -14,6 +16,7 @@ array: .word 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
  *      X3 - accumulation
  */
 main:
+	MOVZ		X0, int_a, 17
 	LDA     X0, array       /* load address of array into X0 */
 	ADDI    X1, XZR, N      /* make X1 = N */
 	MOV     X3, XZR         /* clean X3 */
