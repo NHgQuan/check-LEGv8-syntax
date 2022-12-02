@@ -381,7 +381,7 @@ void checkParameter(struct Node* parameter, int lineIndex, char** inttTypeLine, 
     
 }
 
-void checkIntruction(char* intruction, const int lineIndex, Node* constSet, Node* labelSet)
+void checkIntruction(char* intruction, const int lineIndex, Node* constSet, Node* labelSet, fDataNode* inttTypeList)
 {
     /// @brief  this function will check type of intruction then check parameter of it
     /// @param intruction is anyline of LEGv8 file
@@ -393,26 +393,7 @@ void checkIntruction(char* intruction, const int lineIndex, Node* constSet, Node
 
     //check which segment intruction is in
     if(changeSegmentFlag(intruction)) return;
-    // preload intruction type data file
-    // this file have key word and immediate condition
-    //FDataNode is a list of fData with each node contain data of each intructionType file
-    // can use list to store this if have time
-    fDataNode *inttTypeList = NULL;
     
-    fData* inttTypePath = readFile("D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/path.txt");
-
-    if(inttTypePath == NULL) 
-    {
-        printf("(x) Couldn't open path.txt");
-        return;
-    }
-
-    for(int i = 0; i <inttTypePath->nums; i++)
-    {
-        char* path =inttTypePath->data[i];
-        appendFdN(&inttTypeList, readFile(path));
-    }
-    free(inttTypePath);
 
     // separate intruction to smaller elements
     struct Node* intructionComponents = separateIntruction(intruction, lineIndex);
@@ -425,7 +406,7 @@ void checkIntruction(char* intruction, const int lineIndex, Node* constSet, Node
     {
         //take num Re and IM
         char* numRe, *numIm;
-        char* inforPara = tempITL->data->data[0];
+        char* inforPara = deepCopyStr(tempITL->data->data[0]);
         numRe = separateFirstWord(&inforPara, ' ');
         numIm = separateFirstWord(&inforPara, ' ');
 

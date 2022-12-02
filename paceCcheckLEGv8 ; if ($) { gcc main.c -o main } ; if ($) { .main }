@@ -1,0 +1,89 @@
+[33mcommit 1e781d1f0c11db45f1173d2721ea97742edd2e32[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Fri Dec 2 16:45:55 2022 +0700
+
+    add line index for error, add LSL for check imm, standardizeITT can remove tab char
+
+[33mcommit e09f90901dc8df788a59ff0b03ba823893ebb84f[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Fri Dec 2 11:45:53 2022 +0700
+
+    change logic of check parameter, num of times check Re and Im have been add to intructionType file, design removeComment function
+
+[33mcommit 0a3130b228b7418aa18c4a12959d78827e5bedc6[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Sat Nov 26 21:05:45 2022 +0700
+
+    add function to get list of label in LEG code
+
+[33mcommit 825eaef3deda9d11f68356b4bbde36d8a247ba3c[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Sat Nov 26 09:11:40 2022 +0700
+
+    enter data for intructionType files
+
+[33mcommit 59610ddd805796b0fcf4b48536c9a9b3d8e53043[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Sat Nov 19 08:56:22 2022 +0700
+
+    complete isImmediate function
+
+[33mcommit a3d810756d79353c65f8fc155b58d3bf3382296b[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Sat Nov 19 08:48:33 2022 +0700
+
+    create function to get bound of immediate condition
+
+[33mcommit b1833468f827ef97adb936c4f54867cd1352ee98[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Sat Nov 19 00:08:15 2022 +0700
+
+    change separate by bracket from round bracket in MIPS to square bracket in LEGv8
+
+[33mcommit f98bcd7e093e45726ad48e6ce0fb581c74bfa48e[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Fri Nov 18 23:43:38 2022 +0700
+
+    change logic of check intruction and check parameter, haven't rewriten check immediate yet
+
+[33mcommit b4a7a135626815379f967c97ff75aa6be1c22b24[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Fri Nov 18 23:04:19 2022 +0700
+
+    fix readfile fucntion take newline character at the end
+
+[33mcommit 541ad5d6000f7400c56c8f65e54e5c4900451bfc[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Thu Nov 17 21:11:00 2022 +0700
+
+    separateIntruction can work exactly with space and comma to sperate keyword and parameter
+
+[33mcommit 3a5945e33dadebbf552603c56daf1a30198cd3ef[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Thu Nov 17 21:03:28 2022 +0700
+
+    intruction is restandized, sperate first word work with any char, not only space
+
+[33mcommit 1e3f57d75afaec021b3f4cf30d2ec335b47b6ad6[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Wed Nov 16 22:25:41 2022 +0700
+
+    separateIntruction can process i intruction with (parameter)
+
+[33mcommit 13c5958babc8b9510d929bb945728eede90c66a9[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Wed Nov 16 21:42:45 2022 +0700
+
+    sperateIntruction can work except special case of i have bracket
+
+[33mcommit 41a176e021ab7ed0fac31741f35a6368d3c17a05[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Wed Nov 16 21:35:58 2022 +0700
+
+    fix bug of standazeStr and sperateFirstWort: change parameter form char* to char**
+
+[33mcommit ce2e116fb536225fd0a02567ea05c81893297bda[m
+Author: Quan Nguyen Hong <quan.nguyenhg12@hcmut.edu.vn>
+Date:   Wed Nov 16 20:11:15 2022 +0700
+
+    hoan thien chuyen code tu Cpp sang C, sua loi readFile
