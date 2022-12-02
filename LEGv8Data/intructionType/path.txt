@@ -5,4 +5,4 @@ D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/1r+2i.txt
 D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/2r.txt
 D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/2r+1i.txt
 D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/3r.txt
-D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/coprocessor.txt
+D:/Workspace/C/checkLEGv8/LEGv8Data/intructionType/dataIntruction.txt

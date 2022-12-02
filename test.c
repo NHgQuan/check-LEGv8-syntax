@@ -5,7 +5,8 @@
 
 int main()
 {
-    char * intrction = "ADDI $s0 ,$s1, 10000000000000000000a";
-    // checkIntruction(intrction, 1);
-    printf("%c", backStr(intrction));
+    char* str1 ="abc abc bcd bc b aaa";
+    char* str2 ="aa";
+    printf("%d", strstr(str1, str2));
+    
 }

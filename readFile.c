@@ -5,8 +5,12 @@
 #include<stdio.h>
 #include "./dataStructure.c"
 
+
+
 struct fData* readFile(const char* path)
 {
+
+    int abc =0;
 
     FILE *file = fopen(path, "r");
 
@@ -56,9 +60,10 @@ struct fData* readFile(const char* path)
 struct fData* getData()
 {
     //enter file name
-    char filePath[100];
-    printf("Enter file path you want to check: ");
-    gets(filePath);
+    // char filePath[100];
+    // // printf("Enter file path you want to check: ");
+    // // gets(filePath);
+    char filePath[] = "D:/Workspace/C/checkLEGv8/sumArray.txt";
     //read file
     struct fData* file = readFile(filePath);
     return file;

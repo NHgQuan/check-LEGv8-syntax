@@ -16,6 +16,13 @@ typedef struct fData
         char** data;
 } fData;
 
+void printFN(struct fData* data)
+{
+    for(int i=0; i<data->nums; i++)
+    {
+        printf("%s\n", data->data[i]);
+    }
+}
 typedef struct Node
 {
   char* data;
@@ -74,6 +81,15 @@ int lengthN(struct Node** head)
         length++;
     }
     return length;
+}
+
+void printN(struct Node* head)
+{
+    while(head)
+    {
+        printf("%s\n", head->data);
+        head = head->next;
+    }
 }
 
 // fData list
@@ -324,10 +340,50 @@ boolean compareStr(const char* str1, const char* str2)
     if(*str1=='\0' && *str2=='\0') return T;
     else return F;
 }
-// Returns 1 if character1 and character2 are matching left
-// and right Brackets
+
+int strstr(const char *str, const char *sub)
+{
+    const char * p1, *p2, *p3;
+    int i=0,j=0,flag=0;
+
+    p1 = str;
+    p2 = sub;
+
+    for(i = 0; i<lenStr(str); i++)
+    {
+        if(*p1 == *p2)
+        {
+            p3 = p1;
+            for(j = 0;j<lenStr(sub);j++)
+            {
+                if(*p3 == *p2)
+                {
+                p3++;p2++;
+                } 
+                else
+                break;
+            }
+            p2 = sub;
+            if(j == lenStr(sub))
+            {
+                flag = 1;
+                return i;
+            }
+        }
+        p1++; 
+    }
+    if(flag==0)
+    {
+        return -1;
+    }
+}
+
 boolean isMatchingPair(char character1, char character2)
 {
+    /// @brief 
+    /// @param character1 
+    /// @param character2 
+    /// @return Returns 1 if character1 and character2 are matching left and right Brackets
     if (character1 == '(' && character2 == ')')
         return T;
     else if (character1 == '{' && character2 == '}')
