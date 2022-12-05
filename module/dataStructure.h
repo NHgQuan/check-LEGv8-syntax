@@ -16,6 +16,16 @@ typedef struct fData
         char** data;
 } fData;
 
+void clearFData(fData** data)
+{
+    for(int i = 0; i < (*data)->nums; i++)
+    {
+        free((*data)->data[i]);
+    }
+    free((*data)->data);
+    free(*data);
+}
+
 void printFN(struct fData* data)
 {
     for(int i=0; i<data->nums; i++)
@@ -64,9 +74,9 @@ void clearN(struct Node** head)
     while(*head!=NULL) 
     {
         struct Node* temp;
-        struct Node* prev;
         temp = *head;
         *head = temp->next;
+        free(temp->data);
         free(temp);
     }
 }
@@ -137,7 +147,7 @@ void clearFdN(struct fDataNode** head)
         struct fDataNode* prev;
         temp = *head;
         *head = temp->next;
-        free(temp);
+        clearFData(&(temp->data));
     }
 }
 
@@ -159,7 +169,16 @@ struct sNode {
     char data;
     struct sNode* next;
 };
- 
+
+void clearSNode( struct sNode** node )
+{
+    while(*node)
+    {
+        struct sNode* temp = *node;
+        *node = temp->next;
+        free(temp);
+    }
+}
  // Function to pushS an item to stack
 void pushS(struct sNode** top_ref, int new_data)
 {
@@ -440,9 +459,16 @@ boolean areBracketsBalanced(char exp[])
     // is a starting bracket without a closing
     // bracket
     if (stack == NULL)
+    {
+        clearSNode(&stack);
         return T; // balanced
+    }
     else
+    {
+        clearSNode(&stack);
         return F; // not balanced
+    }
+        
 }
 
 char* takeFirstWord(char* str, const char chr)
@@ -476,8 +502,9 @@ char* takeFirstWord(char* str, const char chr)
 
 void removeFirstWord(char** str, const char chr)
 {
-    int lengthFirstWord = lenStr(takeFirstWord(*str, chr));
-    // check memory leak in here
+    char* firstWord = takeFirstWord(*str, chr);
+    int lengthFirstWord = lenStr(firstWord);
+    free(firstWord);
     for(int i = 0; i < lengthFirstWord; i++)
     {
         removeCharStr(str, 0);

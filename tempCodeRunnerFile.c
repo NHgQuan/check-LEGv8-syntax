@@ -1,2 +1,0 @@
-
-    Node* constSet = getConstansList(intruction

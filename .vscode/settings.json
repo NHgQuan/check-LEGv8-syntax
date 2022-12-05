@@ -40,6 +40,7 @@
     "type_traits": "c",
     "utility": "c",
     "string": "c",
-    "string_view": "c"
+    "string_view": "c",
+    "readfile.h": "c"
   }
 }

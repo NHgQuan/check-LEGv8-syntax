@@ -2,9 +2,9 @@
 #define __SYNTAXCHECK__
 #include<stdlib.h>
 #include<stdio.h>
-#include "dataStructure.c"
-#include "Readfile.c"
-#include "math.c"
+#include "dataStructure.h"
+#include "Readfile.h"
+#include "math.h"
 
 static int textSegment = 0;
 static int dataSegment = 0;
@@ -81,11 +81,13 @@ char* intructionType(struct Node *intruction, fDataNode* inttTypeSet)
     //haven't deallocated yet
     for(int i =1; i<inttTypeSet->data->nums; i++) 
     {
-        if(compareStr(intruction->data, takeFirstWord(inttTypeSet->data->data[i], ' '))) 
+        char* keyWord = takeFirstWord(inttTypeSet->data->data[i], ' ');
+        if(compareStr(intruction->data, keyWord)) 
         {
             char* inttTypeLine = inttTypeSet->data->data[i];
             return inttTypeLine;
         }
+        free(keyWord);
     }
     //if intructionType is not belong to any contruction type
     return NULL;
@@ -96,15 +98,22 @@ void isRegister(char* parameter, int lineIndex)
     struct fData* registersSet = readFile("D:/Workspace/C/checkLEGv8/LEGv8Data/registersSet/registersSet.txt");
     for(int i = 0; i < registersSet->nums; i++)
     {
-        if(compareStr(parameter, registersSet->data[i])) return;
+        if(compareStr(parameter, registersSet->data[i])) 
+        {
+            clearFData(&registersSet);
+            return;
+        }
     }
+    clearFData(&registersSet);
     printf("(x) invalid parameter \'%s\' [line %d]\n", parameter, lineIndex);
 }
 
 boolean isLSL(int parameter)
 {
     //LSL has following value
-    return (parameter==0)||(parameter==16)||(parameter==32)||(parameter==48);
+    if((parameter==0)||(parameter==16)||(parameter==32)||(parameter==48))
+    return T;
+    return F;
 }
 
 int* getImmBound(char* condition)
@@ -137,11 +146,16 @@ void isImediate(char* parameter, int lineIndex, char** inttTypeLine, Node* const
     /// @param inttTypeLine 
     if(isNumberStr(parameter))
     {
-        if(!compareStr(takeFirstWord((*inttTypeLine), ' '), "LSL"))
+        char* boundInfo = takeFirstWord((*inttTypeLine), ' ');
+        if(!compareStr(boundInfo, "LSL"))
         {
-            int* bound = getImmBound(separateFirstWord(inttTypeLine, ' '));
+            char* boundChar = separateFirstWord(inttTypeLine, ' ');
+            //bound[0] is lower bound, bound[1] is upper bound
+            int* bound = getImmBound(boundChar);
             int imm = toInt(parameter);
             if(!(imm>=bound[0]&&imm<=bound[1])) printf("(x) out of range: %s [line %d]\n",parameter, lineIndex);
+            free(boundChar);
+            free(bound);
         }
         else
         {
@@ -151,7 +165,7 @@ void isImediate(char* parameter, int lineIndex, char** inttTypeLine, Node* const
                 printf("(x) invalid parameter %s [line %d]\n",parameter, lineIndex);
             }
         }
-        
+        free(boundInfo);
     }
     else
     {
@@ -277,12 +291,14 @@ struct Node* getLabelList(fData* intructionSet)
     struct Node* LabelList = NULL;
     for(int i =0 ; i< intructionSet->nums; i++)
     {
-        if(isLabel(takeFirstWord((intructionSet->data[i]), ' '))) 
+        char* label = takeFirstWord((intructionSet->data[i]), ' ');
+        if(isLabel(label)) 
         {
             char* label = deepCopyStr(separateFirstWord(&(intructionSet->data[i]), ' '));
             removeCharStr(&label, lenStr(label)-1);
             appendN(&LabelList, label);
         }
+        free(label);
     }
     return LabelList;
 }
@@ -300,43 +316,46 @@ struct Node* getConstansList(fData* intructionSet)
         // set flag
         if(changeSegmentFlag(intructionSet->data[i])) continue;
 
-        if(compareStr(takeFirstWord((intructionSet->data[i]), ' '), ".eqv"))
+        char* keyWord = takeFirstWord((intructionSet->data[i]), ' ');
+
+        if(compareStr(keyWord, ".eqv"))
+        {
+            //take const name to const list
+            removeFirstWord(&(intructionSet->data[i]), ' ');
+            appendN(&constList, separateFirstWord(&(intructionSet->data[i]), ' '));
+
+            //remove number data part
+            if(lenStr(intructionSet->data[i]))
             {
-                //take const name to const list
-                removeFirstWord(&(intructionSet->data[i]), ' ');
-                appendN(&constList, separateFirstWord(&(intructionSet->data[i]), ' '));
-
-                //remove number data part
-                if(lenStr(intructionSet->data[i]))
-                {
-                    if(strstr(intructionSet->data[i], " "))
-                        removeFirstWord(&(intructionSet->data[i]), ' ');
-                    else
-                    if(strstr(intructionSet->data[i], ","))
-                        removeFirstWord(&(intructionSet->data[i]), ' ');
-                    else
-                        {
-                            while(lenStr(intructionSet->data[i]))
-                            {
-                                removeCharStr(&(intructionSet->data[i]), 0);
-                            }
-                        }
-                }
-
-                //if line is still have data, print error
-                if(lenStr(intructionSet->data[i]))
+                if(strstr(intructionSet->data[i], " "))
+                    removeFirstWord(&(intructionSet->data[i]), ' ');
+                else
+                if(strstr(intructionSet->data[i], ","))
+                    removeFirstWord(&(intructionSet->data[i]), ' ');
+                else
                     {
                         while(lenStr(intructionSet->data[i]))
                         {
-                            removeFirstWord(&(intructionSet->data[i]), 'z');
+                            removeCharStr(&(intructionSet->data[i]), 0);
                         }
-                        printf("(x) invalid identifier [line %d]\n", i);
                     }
-
-                //if const identifier is in data or text segment, print error
-                if(dataSegment||textSegment)
-                    printf("(x) constant identifier cannot be here[line %d]\n", i);
             }
+
+            //if line is still have data, print error
+            if(lenStr(intructionSet->data[i]))
+                {
+                    while(lenStr(intructionSet->data[i]))
+                    {
+                        removeFirstWord(&(intructionSet->data[i]), 'z');
+                    }
+                    printf("(x) invalid identifier [line %d]\n", i);
+                }
+
+            //if const identifier is in data or text segment, print error
+            if(dataSegment||textSegment)
+                printf("(x) constant identifier cannot be here[line %d]\n", i);
+        }
+        free(keyWord);
     }
 
     //set flag to initial value
@@ -374,7 +393,7 @@ void checkParameter(struct Node* parameter, int lineIndex, char** inttTypeLine, 
         {
             isImediate(parameter->data, lineIndex, inttTypeLine, constSet, labelSet);
             parameter = parameter->next;
-            separateFirstWord(inttTypeLine, ' ');
+            removeFirstWord(inttTypeLine, ' ');
         }
     }
     
@@ -399,8 +418,10 @@ void checkIntruction(char* intruction, const int lineIndex, Node* constSet, Node
     struct Node* intructionComponents = separateIntruction(intruction, lineIndex);
     if(!intructionComponents) return ;
 
-    //create new variable to store line of this intruction in type file
+    //create new variable to store keyword line of this intruction in type file
     char* inttTypeLine = NULL;
+
+    //check intruction
     fDataNode* tempITL = inttTypeList;
     for(int i =0; i<lengthFdN(&inttTypeList); i++)
     {
@@ -420,24 +441,36 @@ void checkIntruction(char* intruction, const int lineIndex, Node* constSet, Node
                 {
                     //this in data segment
                     //check flag
-                    if(dataSegment==0) printf("(x) %s must be in data segment [line %d]\n", takeFirstWord(iTLClone, ' '), lineIndex);
+                    char* keyWord = takeFirstWord(iTLClone, ' ');
+                    if(dataSegment==0) printf("(x) %s must be in data segment [line %d]\n", keyWord, lineIndex);
+                    free(keyWord);
                 }
                 else
                 {
-                    if(textSegment==0) printf("(x) %s must be in text segment [line %d]\n", takeFirstWord(iTLClone, ' '), lineIndex);
+                    //this in text segment
+                    //check flag
+                    char* keyWord = takeFirstWord(iTLClone, ' ');
+                    if(textSegment==0) printf("(x) %s must be in text segment [line %d]\n", keyWord, lineIndex);
+                    free(keyWord);
                 }
-                //memory leak
-                separateFirstWord(&iTLClone, ' ');   //remove key word, keep only imm condition
-                
+
+                removeFirstWord(&iTLClone, ' ');   //remove key word, keep only imm condition
+
+
                 checkParameter(intructionComponents->next, lineIndex, &iTLClone, numRe, numIm, constSet, labelSet);
                 break;
+                free(iTLClone);
             }
         
         if(inttTypeLine == NULL)
             tempITL= tempITL->next;
+        free(inttTypeLine);
+        free(inforPara);
+        free(numRe);
+        free(numIm);
     }
     if(inttTypeLine == NULL)  printf("(x) undefined intruction %s [line %d]\n", intructionComponents->data, lineIndex);
-    
+    clearN(&intructionComponents);
 }
 
 

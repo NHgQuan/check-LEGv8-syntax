@@ -3,7 +3,7 @@
 
 #include<stdlib.h>
 #include<stdio.h>
-#include "./dataStructure.c"
+#include "dataStructure.h"
 
 
 
@@ -41,6 +41,11 @@ struct fData* readFile(const char* path)
     }
     while(fgets(data[loop++], 100 , file) != NULL);
 
+    // for(int i=0; i<loop; i++)
+    // {
+    //     printf("%s", data[i]);
+    // }    
+
     for(int i=0; i<fileLen-1; i++)
     {
         removeCharStr(&data[i], lenStr(data[i])-1);
@@ -60,13 +65,40 @@ struct fData* readFile(const char* path)
 struct fData* getData()
 {
     //enter file name
-    // char filePath[100];
-    // // printf("Enter file path you want to check: ");
-    // // gets(filePath);
-    char filePath[] = "D:/Workspace/C/checkLEGv8/sumArray.txt";
+
+    //commment or uncomment to enter your file or use sample file 
+
+    char filePath[100];
+    printf("Enter file path you want to check: ");
+    gets(filePath);
+    //char filePath[] = "D:/Workspace/C/checkLEGv8/sample/sumArray.s";
+    //char filePath[] = "D:/Workspace/C/checkLEGv8/sample/sumTwo.s";
+    
     //read file
     struct fData* file = readFile(filePath);
     return file;
+}
+
+fDataNode* readIntructionTypeFolder(const char* filePath)
+{
+    fDataNode *inttTypeList = NULL;
+    
+    fData* inttTypePath = readFile(filePath);
+
+    if(inttTypePath == NULL) 
+    {
+        printf("(x) Couldn't open path.txt");
+        return 0;
+    }
+
+    for(int i = 0; i <inttTypePath->nums; i++)
+    {
+        char* path =inttTypePath->data[i];
+        appendFdN(&inttTypeList, readFile(path));
+    }
+    clearFData(&inttTypePath);
+
+    return inttTypeList;
 }
 
 #endif
